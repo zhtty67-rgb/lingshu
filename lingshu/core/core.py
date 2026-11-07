@@ -10665,11 +10665,7 @@ class SpacetimeMemoryEngine:
                 except (ValueError, TypeError) as _e:
                     return {"status": "error", "error": str(_e)}
             if "policy" in p:
-                # #2424 续：policy 闭集闸的可读 ValueError 同在门面收口。
-                try:
-                    self._wmodel.set_identity_policy(p["policy"])
-                except (ValueError, TypeError) as _e:
-                    return {"status": "error", "error": str(_e)}
+                self._wmodel.set_identity_policy(p["policy"])
             return {"status": "ok", "identity_policy": self._wmodel.identity_policy}
         if not hasattr(self, '_wmodel'):
             self._wmodel = UnifiedWorldModel()

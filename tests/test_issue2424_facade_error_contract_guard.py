@@ -213,12 +213,14 @@ def test_2424_identity_nonlist_rejected():
         "#2424续 identity 非list 仍裸穿：%r" % (r,))
 
 
-def test_2424_identity_policy_bad_rejected():
+def test_2424_identity_policy_raw_contract_kept():
+    """identity_policy 的裸 ValueError 是既有裁决（专用守卫
+    test_core_policy_and_readonly… 断言 pytest.raises(ValueError)），
+    不在本票收口范围。"""
     e = _e()
     e.world_model("init", {}); e.world_model("create", {})
-    r = e.world_model("identity_policy", {"policy": 123})
-    assert r.get("status") == "error" and "legacy" in r.get("error", ""), (
-        "#2424续 identity_policy 非法仍裸穿：%r" % (r,))
+    with pytest.raises(ValueError):
+        e.world_model("identity_policy", {"policy": "unsupported"})
 
 
 def test_2424_identity_policy_legal_ok():
