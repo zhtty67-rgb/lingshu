@@ -201,3 +201,28 @@ def test_2424_perceive_visual_legal_ok():
     e.world3d("add", {"category": "box", "bbox": [380, 280, 420, 320]})
     r = e.world_model("perceive_visual", {})
     assert r.get("status") == "ok", r
+
+
+# ---------------------------------------------------------------- G10（#2424 续·identity/identity_policy 同契约）
+
+def test_2424_identity_nonlist_rejected():
+    e = _e()
+    e.world_model("init", {}); e.world_model("create", {})
+    r = e.world_model("identity", {"observations": "notalist"})
+    assert r.get("status") == "error" and "list" in r.get("error", ""), (
+        "#2424续 identity 非list 仍裸穿：%r" % (r,))
+
+
+def test_2424_identity_policy_bad_rejected():
+    e = _e()
+    e.world_model("init", {}); e.world_model("create", {})
+    r = e.world_model("identity_policy", {"policy": 123})
+    assert r.get("status") == "error" and "legacy" in r.get("error", ""), (
+        "#2424续 identity_policy 非法仍裸穿：%r" % (r,))
+
+
+def test_2424_identity_policy_legal_ok():
+    e = _e()
+    e.world_model("init", {}); e.world_model("create", {})
+    r = e.world_model("identity_policy", {"policy": "conservative"})
+    assert r.get("status") == "ok" and r.get("identity_policy") == "conservative", r

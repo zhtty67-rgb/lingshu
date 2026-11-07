@@ -10657,10 +10657,19 @@ class SpacetimeMemoryEngine:
             if not hasattr(self, '_wmodel'):
                 return {"status": "error", "error": "先 world_model init"}
             if action == "identity":
-                return {"status": "ok", "identity": self._wmodel.inspect_identity(
-                    p.get("observations", []), tick=p.get("tick"))}
+                # #2424 续：observations 闸的可读 ValueError 在门面收口
+                # （修前裸穿实测：observations 非 list ⇒ 裸 ValueError）。
+                try:
+                    return {"status": "ok", "identity": self._wmodel.inspect_identity(
+                        p.get("observations", []), tick=p.get("tick"))}
+                except (ValueError, TypeError) as _e:
+                    return {"status": "error", "error": str(_e)}
             if "policy" in p:
-                self._wmodel.set_identity_policy(p["policy"])
+                # #2424 续：policy 闭集闸的可读 ValueError 同在门面收口。
+                try:
+                    self._wmodel.set_identity_policy(p["policy"])
+                except (ValueError, TypeError) as _e:
+                    return {"status": "error", "error": str(_e)}
             return {"status": "ok", "identity_policy": self._wmodel.identity_policy}
         if not hasattr(self, '_wmodel'):
             self._wmodel = UnifiedWorldModel()
